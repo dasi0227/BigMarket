@@ -1,3 +1,6 @@
+DROP DATABASE IF EXISTS big_market;
+CREATE DATABASE big_market DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
+
 DROP TABLE IF EXISTS strategy;
 CREATE TABLE strategy (
     id BIGINT AUTO_INCREMENT COMMENT '自增ID',
