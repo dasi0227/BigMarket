@@ -1,6 +1,3 @@
-DROP DATABASE IF EXISTS big_market;
-CREATE DATABASE big_market DEFAULT CHARSET utf8mb4 COLLATE utf8mb4_general_ci;
-
 DROP TABLE IF EXISTS strategy;
 CREATE TABLE strategy (
     id BIGINT AUTO_INCREMENT COMMENT '自增ID',
@@ -13,7 +10,7 @@ CREATE TABLE strategy (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='抽奖策略表';
 INSERT INTO strategy (strategy_id, strategy_desc, rule_models)
 VALUES
-    (100001, '测试策略', 'rule_blacklist,rule_weight');
+    (1001, '测试策略', 'rule_blacklist,rule_weight');
 
 DROP TABLE IF EXISTS strategy_rule;
 CREATE TABLE strategy_rule (
@@ -29,8 +26,8 @@ CREATE TABLE strategy_rule (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='抽奖策略规则表';
 INSERT INTO strategy_rule (strategy_id, rule_model, rule_value, rule_desc)
 VALUES
-    (100001, 'rule_blacklist', '100:dasi', '黑名单：dasi'),
-    (100001, 'rule_weight', '4000:101,102 5000:102,103', '权重：4000 和 5000');
+    (1001, 'rule_blacklist', '100:dasi', '黑名单：dasi'),
+    (1001, 'rule_weight', '4000:2001,2002 5000:2002,2003', '权重：4000 和 5000');
 
 DROP TABLE IF EXISTS strategy_award;
 CREATE TABLE strategy_award (
@@ -51,9 +48,9 @@ CREATE TABLE strategy_award (
 INSERT INTO strategy_award
 (strategy_id, award_id, award_title, award_total, award_surplus, award_rate, tree_id)
 VALUES
-    (100001, 101, '测试策略奖品101', 15, 15, 0.1500, 'tree_test'),
-    (100001, 102, '测试策略奖品102', 80, 80, 0.8000, 'tree_test'),
-    (100001, 103, '测试策略奖品103', 5, 5, 0.0500, 'tree_test');
+    (1001, 2001, '测试策略奖品2001', 15, 15, 0.1500, 'tree_test'),
+    (1001, 2002, '测试策略奖品2002', 80, 80, 0.8000, 'tree_test'),
+    (1001, 2003, '测试策略奖品2003', 5, 5, 0.0500, 'tree_test');
 
 DROP TABLE IF EXISTS award;
 CREATE TABLE award (
@@ -68,9 +65,9 @@ CREATE TABLE award (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT='奖品表';
 INSERT INTO award (award_id, award_name, award_config, award_desc)
 VALUES
-    (101, '测试奖品-随机积分', '1,100', '描述101'),
-    (102, '测试奖品-2元优惠券', NULL, '描述102'),
-    (103, '测试奖品-IPhone17', NULL, '描述103');
+    (2001, '测试奖品-随机积分', '1,100', '测试描述'),
+    (2002, '测试奖品-2元优惠券', NULL, '测试描述'),
+    (2003, '测试奖品-IPhone17', NULL, '测试描述');
 
 DROP TABLE IF EXISTS rule_tree;
 CREATE TABLE `rule_tree` (
@@ -102,7 +99,7 @@ CREATE TABLE `rule_node` (
 INSERT INTO rule_node (tree_id, rule_model, rule_desc, rule_value)
 VALUES
     ('tree_test', 'rule_lock', '达到一定次数解锁', '3'),
-    ('tree_test', 'rule_luck', '幸运奖品', '101'),
+    ('tree_test', 'rule_luck', '幸运奖品', '2001'),
     ('tree_test', 'rule_stock', '库存扣减', NULL);
 
 DROP TABLE IF EXISTS rule_edge;
