@@ -66,21 +66,21 @@ CREATE TABLE activity_account (
 -- 账户在每个活动通过什么权益获得的抽奖次数
 DROP TABLE IF EXISTS activity_order_000;
 CREATE TABLE activity_order_000 (
-    id                BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
-    order_id          VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
-    biz_id            VARCHAR(32) UNIQUE NOT NULL COMMENT '业务幂等id',
-    activity_id       BIGINT             NOT NULL COMMENT '活动id',
-    activity_quota_id BIGINT             NOT NULL COMMENT '定量id',
-    strategy_id       BIGINT             NOT NULL COMMENT '策略id',
-    user_id           VARCHAR(32)        NOT NULL COMMENT '用户id',
-    sku_id            BIGINT             NOT NULL COMMENT '库存id',
-    total_count       INT                NOT NULL COMMENT '本次下单获得的总次数',
-    month_count       INT                NOT NULL COMMENT '本次下单获得的月次数',
-    day_count         INT                NOT NULL COMMENT '本次下单获得的日次数',
-    order_state       VARCHAR(32)        NOT NULL COMMENT '订单状态',
-    order_time        DATETIME           NOT NULL COMMENT '下单时间',
-    create_time       DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+    id                   BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
+    order_id             VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
+    biz_id               VARCHAR(32) UNIQUE NOT NULL COMMENT '业务幂等id',
+    activity_id          BIGINT             NOT NULL COMMENT '活动id',
+    activity_quota_id    BIGINT             NOT NULL COMMENT '定量id',
+    strategy_id          BIGINT             NOT NULL COMMENT '策略id',
+    user_id              VARCHAR(32)        NOT NULL COMMENT '用户id',
+    sku_id               BIGINT             NOT NULL COMMENT '库存id',
+    total_count          INT                NOT NULL COMMENT '本次下单获得的总次数',
+    month_count          INT                NOT NULL COMMENT '本次下单获得的月次数',
+    day_count            INT                NOT NULL COMMENT '本次下单获得的日次数',
+    activity_order_state VARCHAR(32)        NOT NULL COMMENT '订单状态',
+    order_time           DATETIME           NOT NULL COMMENT '下单时间',
+    create_time          DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time          DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='参与活动获得权益的订单';
 
 -- 当月的抽奖消耗
@@ -123,15 +123,15 @@ CREATE TABLE raffle_task (
 
 DROP TABLE IF EXISTS raffle_order_000;
 CREATE TABLE raffle_order_000 (
-    id            BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
-    order_id      VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
-    user_id       VARCHAR(32)        NOT NULL COMMENT '用户id',
-    activity_id   BIGINT             NOT NULL COMMENT '活动id',
-    strategy_id   BIGINT             NOT NULL COMMENT '策略id',
-    order_state   VARCHAR(32)        NOT NULL COMMENT '订单状态',
-    order_time    DATETIME           NOT NULL COMMENT '下单时间',
-    create_time   DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time   DATETIME         NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    id                 BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
+    order_id           VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
+    user_id            VARCHAR(32)        NOT NULL COMMENT '用户id',
+    activity_id        BIGINT             NOT NULL COMMENT '活动id',
+    strategy_id        BIGINT             NOT NULL COMMENT '策略id',
+    raffle_order_state VARCHAR(32)        NOT NULL COMMENT '订单状态',
+    order_time         DATETIME           NOT NULL COMMENT '下单时间',
+    create_time        DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time        DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     KEY idx_user_id_activity_id (user_id, activity_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='抽奖订单表';
 
