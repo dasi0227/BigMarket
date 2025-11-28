@@ -17,31 +17,31 @@ CREATE TABLE activity (
 INSERT INTO activity (activity_id, strategy_id, activity_name, activity_desc, activity_state, activity_begin_time, activity_end_time)
 VALUES (1001, 1001, '测试活动', '测试活动描述', 'underway', '2025-11-25 00:00:00', '2025-12-25 00:00:00');
 
-DROP TABLE IF EXISTS activity_quota;
-CREATE TABLE activity_quota (
+DROP TABLE IF EXISTS recharge_quota;
+CREATE TABLE recharge_quota (
     id                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
-    activity_quota_id BIGINT UNIQUE   NOT NULL COMMENT '定量id',
+    quota_id          BIGINT UNIQUE   NOT NULL COMMENT '定量id',
     total_count       INT             NOT NULL COMMENT '总次数',
     month_count       INT             NOT NULL COMMENT '每月次数',
     day_count         INT             NOT NULL COMMENT '每日次数',
     create_time       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT ='权益的抽奖次数定量配置';
-INSERT INTO activity_quota (activity_quota_id, total_count, month_count, day_count)
+INSERT INTO recharge_quota (quota_id, total_count, month_count, day_count)
 VALUES (2001, 5, 2, 1);
 
-DROP TABLE IF EXISTS activity_sku;
-CREATE TABLE activity_sku (
+DROP TABLE IF EXISTS recharge_sku;
+CREATE TABLE recharge_sku (
     id                BIGINT UNSIGNED NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
     sku_id            BIGINT UNIQUE   NOT NULL COMMENT '库存id',
     activity_id       BIGINT          NOT NULL COMMENT '活动id',
-    activity_quota_id BIGINT          NOT NULL COMMENT '定量id',
+    quota_id          BIGINT          NOT NULL COMMENT '定量id',
     stock_allocate    INT             NOT NULL COMMENT '库存分配',
     stock_surplus     INT             NOT NULL COMMENT '库存剩余',
     create_time       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time       DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT ='每个活动不同权益的库存配置';
-INSERT INTO activity_sku (sku_id, activity_id, activity_quota_id, stock_allocate, stock_surplus)
+INSERT INTO recharge_sku (sku_id, activity_id, quota_id, stock_allocate, stock_surplus)
 VALUES (3001, 1001, 2001, 100, 10);
 
 -- 分库 big_market_01
@@ -54,38 +54,38 @@ CREATE TABLE activity_account (
     activity_id    BIGINT          NOT NULL COMMENT '活动id',
     total_allocate INT             NOT NULL COMMENT '总分配',
     total_surplus  INT             NOT NULL COMMENT '总余额',
-    day_allocate   INT             NOT NULL COMMENT '天分配',
-    day_surplus    INT             NOT NULL COMMENT '天余额',
     month_allocate INT             NOT NULL COMMENT '月分配',
     month_surplus  INT             NOT NULL COMMENT '月余额',
+    day_allocate   INT             NOT NULL COMMENT '天分配',
+    day_surplus    INT             NOT NULL COMMENT '天余额',
     create_time    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time    DATETIME        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     UNIQUE KEY uq_user_id_activity_id (user_id, activity_id)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE=utf8mb4_0900_ai_ci COMMENT ='账户在每个活动获得的抽奖次数';
 
 -- 账户在每个活动通过什么权益获得的抽奖次数
-DROP TABLE IF EXISTS activity_order_000;
-CREATE TABLE activity_order_000 (
+DROP TABLE IF EXISTS recharge_order_000;
+CREATE TABLE recharge_order_000 (
     id                   BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
-    order_id             VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
+    order_id             VARCHAR(32) UNIQUE NOT NULL COMMENT '充值订单id',
     biz_id               VARCHAR(32) UNIQUE NOT NULL COMMENT '业务幂等id',
     activity_id          BIGINT             NOT NULL COMMENT '活动id',
-    activity_quota_id    BIGINT             NOT NULL COMMENT '定量id',
+    quota_id             BIGINT             NOT NULL COMMENT '定量id',
     strategy_id          BIGINT             NOT NULL COMMENT '策略id',
     user_id              VARCHAR(32)        NOT NULL COMMENT '用户id',
     sku_id               BIGINT             NOT NULL COMMENT '库存id',
     total_count          INT                NOT NULL COMMENT '本次下单获得的总次数',
     month_count          INT                NOT NULL COMMENT '本次下单获得的月次数',
     day_count            INT                NOT NULL COMMENT '本次下单获得的日次数',
-    activity_order_state VARCHAR(32)        NOT NULL COMMENT '订单状态',
-    order_time           DATETIME           NOT NULL COMMENT '下单时间',
+    recharge_state       VARCHAR(32)        NOT NULL COMMENT '充值状态',
+    recharge_time        DATETIME           NOT NULL COMMENT '充值时间',
     create_time          DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time          DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='参与活动获得权益的订单';
+) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='充值抽奖次数订单';
 
 -- 当月的抽奖消耗
-DROP TABLE IF EXISTS activity_month;
-CREATE TABLE activity_month (
+DROP TABLE IF EXISTS activity_account_month;
+CREATE TABLE activity_account_month (
     id                  BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
     activity_id         BIGINT           NOT NULL COMMENT '活动id',
     user_id             VARCHAR(32)      NOT NULL COMMENT '用户id',
@@ -98,12 +98,12 @@ CREATE TABLE activity_month (
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='当月的用户抽奖消耗';
 
 -- 当天的抽奖消耗
-DROP TABLE IF EXISTS activity_day;
-CREATE TABLE activity_day (
+DROP TABLE IF EXISTS activity_account_day;
+CREATE TABLE activity_account_day (
     id                  BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
     activity_id         BIGINT           NOT NULL COMMENT '活动id',
     user_id             VARCHAR(32)      NOT NULL COMMENT '用户id',
-    `day`                 VARCHAR(32)    NOT NULL COMMENT 'yyyy-mm-dd',
+    `day`               VARCHAR(32)      NOT NULL COMMENT 'yyyy-mm-dd',
     day_allocate        INT              NOT NULL COMMENT '日次数',
     day_surplus         INT              NOT NULL COMMENT '日次数-剩余',
     create_time         datetime         NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
@@ -111,8 +111,8 @@ CREATE TABLE activity_day (
     UNIQUE KEY uq_user_id_activity_id_day (user_id, activity_id, `day`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '当天的用户抽奖消耗';
 
-DROP TABLE IF EXISTS raffle_task;
-CREATE TABLE raffle_task (
+DROP TABLE IF EXISTS task;
+CREATE TABLE task (
     id          BIGINT UNSIGNED  NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
     topic       VARCHAR(32)      NOT NULL COMMENT '消息主题',
     message     VARCHAR(512)     NOT NULL COMMENT '消息主体',
@@ -128,8 +128,8 @@ CREATE TABLE raffle_order_000 (
     user_id            VARCHAR(32)        NOT NULL COMMENT '用户id',
     activity_id        BIGINT             NOT NULL COMMENT '活动id',
     strategy_id        BIGINT             NOT NULL COMMENT '策略id',
-    raffle_order_state VARCHAR(32)        NOT NULL COMMENT '订单状态',
-    order_time         DATETIME           NOT NULL COMMENT '下单时间',
+    raffle_state       VARCHAR(32)        NOT NULL COMMENT '抽奖状态',
+    raffle_time        DATETIME           NOT NULL COMMENT '抽奖时间',
     create_time        DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
     update_time        DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
     KEY idx_user_id_activity_id (user_id, activity_id)
@@ -142,7 +142,7 @@ CREATE TABLE raffle_award_000 (
     activity_id BIGINT             NOT NULL COMMENT '活动id',
     award_id    INT                NOT NULL COMMENT '奖品id',
     strategy_id BIGINT             NOT NULL COMMENT '策略id',
-    order_id    VARCHAR(32) UNIQUE NOT NULL COMMENT '订单id',
+    raffle_id   VARCHAR(32)        NOT NULL COMMENT '订单id',
     award_title VARCHAR(32)        NOT NULL COMMENT '奖品标题',
     award_time  DATETIME           NOT NULL COMMENT '中奖时间',
     award_state VARCHAR(32)        NOT NULL COMMENT '奖品发放状态',
@@ -150,12 +150,12 @@ CREATE TABLE raffle_award_000 (
     update_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT ='用户中奖记录表';
 
-DROP TABLE IF EXISTS activity_order_001;
-CREATE TABLE IF NOT EXISTS activity_order_001 LIKE activity_order_000;
-DROP TABLE IF EXISTS activity_order_002;
-CREATE TABLE IF NOT EXISTS activity_order_002 LIKE activity_order_000;
-DROP TABLE IF EXISTS activity_order_003;
-CREATE TABLE IF NOT EXISTS activity_order_003 LIKE activity_order_000;
+DROP TABLE IF EXISTS recharge_order_001;
+CREATE TABLE IF NOT EXISTS recharge_order_001 LIKE recharge_order_000;
+DROP TABLE IF EXISTS recharge_order_002;
+CREATE TABLE IF NOT EXISTS recharge_order_002 LIKE recharge_order_000;
+DROP TABLE IF EXISTS recharge_order_003;
+CREATE TABLE IF NOT EXISTS recharge_order_003 LIKE recharge_order_000;
 
 DROP TABLE IF EXISTS raffle_award_001;
 CREATE TABLE IF NOT EXISTS raffle_award_001 LIKE raffle_award_000;
@@ -176,21 +176,21 @@ USE big_market_02;
 
 DROP TABLE IF EXISTS activity_account;
 CREATE TABLE activity_account LIKE big_market_01.activity_account;
-DROP TABLE IF EXISTS activity_day;
-CREATE TABLE activity_day LIKE big_market_01.activity_day;
-DROP TABLE IF EXISTS activity_month;
-CREATE TABLE activity_month LIKE big_market_01.activity_month;
-DROP TABLE IF EXISTS raffle_task;
-CREATE TABLE raffle_task LIKE big_market_01.raffle_task;
+DROP TABLE IF EXISTS activity_account_day;
+CREATE TABLE activity_account_day LIKE big_market_01.activity_account_day;
+DROP TABLE IF EXISTS activity_account_month;
+CREATE TABLE activity_account_month LIKE big_market_01.activity_account_month;
+DROP TABLE IF EXISTS task;
+CREATE TABLE task LIKE big_market_01.task;
 
-DROP TABLE IF EXISTS activity_order_000;
-CREATE TABLE activity_order_000 LIKE big_market_01.activity_order_000;
-DROP TABLE IF EXISTS activity_order_001;
-CREATE TABLE activity_order_001 LIKE big_market_01.activity_order_000;
-DROP TABLE IF EXISTS activity_order_002;
-CREATE TABLE activity_order_002 LIKE big_market_01.activity_order_000;
-DROP TABLE IF EXISTS activity_order_003;
-CREATE TABLE activity_order_003 LIKE big_market_01.activity_order_000;
+DROP TABLE IF EXISTS recharge_order_000;
+CREATE TABLE recharge_order_000 LIKE big_market_01.recharge_order_000;
+DROP TABLE IF EXISTS recharge_order_001;
+CREATE TABLE recharge_order_001 LIKE big_market_01.recharge_order_000;
+DROP TABLE IF EXISTS recharge_order_002;
+CREATE TABLE recharge_order_002 LIKE big_market_01.recharge_order_000;
+DROP TABLE IF EXISTS recharge_order_003;
+CREATE TABLE recharge_order_003 LIKE big_market_01.recharge_order_000;
 
 DROP TABLE IF EXISTS raffle_award_000;
 CREATE TABLE IF NOT EXISTS raffle_award_000 LIKE big_market_01.raffle_award_000;
