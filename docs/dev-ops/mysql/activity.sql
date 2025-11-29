@@ -142,7 +142,7 @@ CREATE TABLE raffle_award_000 (
     award_id    INT                NOT NULL COMMENT '奖品id',
     strategy_id BIGINT             NOT NULL COMMENT '策略id',
     order_id    VARCHAR(32)        NOT NULL COMMENT '订单id',
-    award_title VARCHAR(32)        NOT NULL COMMENT '奖品标题',
+    award_name  VARCHAR(32)        NOT NULL COMMENT '奖品标题',
     award_time  DATETIME           NOT NULL COMMENT '中奖时间',
     award_state VARCHAR(32)        NOT NULL COMMENT '奖品发放状态',
     create_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
