@@ -21,22 +21,6 @@ CREATE TABLE task
   COLLATE = utf8mb4_0900_ai_ci COMMENT ='任务表';
 
 /* =======================================
-用户表：存储用户的积分信息
-======================================= */
-DROP TABLE IF EXISTS user_account;
-CREATE TABLE user_account
-(
-    id          BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
-    user_id     VARCHAR(32) UNIQUE NOT NULL COMMENT '用户id',
-    user_state  VARCHAR(32)        NOT NULL COMMENT '用户状态',
-    user_point  INT                NOT NULL COMMENT '用户积分',
-    create_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
-    update_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
-) ENGINE = InnoDB
-  DEFAULT CHARSET = utf8mb4
-  COLLATE = utf8mb4_0900_ai_ci COMMENT ='用户表';
-
-/* =======================================
 奖品表：最终发放到用户的奖品信息
 ======================================= */
 DROP TABLE IF EXISTS award;
@@ -363,6 +347,22 @@ CREATE TABLE IF NOT EXISTS reward_order
 ) ENGINE = InnoDB
   DEFAULT CHARSET = utf8mb4
   COLLATE = utf8mb4_0900_ai_ci COMMENT ='奖励订单表';
+
+/* =======================================
+用户表：存储用户的积分信息
+======================================= */
+DROP TABLE IF EXISTS user_account;
+CREATE TABLE user_account
+(
+    id          BIGINT UNSIGNED    NOT NULL AUTO_INCREMENT PRIMARY KEY COMMENT '自增id',
+    user_id     VARCHAR(32) UNIQUE NOT NULL COMMENT '用户id',
+    user_state  VARCHAR(32)        NOT NULL COMMENT '用户状态',
+    user_point  INT                NOT NULL COMMENT '用户积分',
+    create_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time DATETIME           NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间'
+) ENGINE = InnoDB
+  DEFAULT CHARSET = utf8mb4
+  COLLATE = utf8mb4_0900_ai_ci COMMENT ='用户表';
 
 /* =======================================
 用户获奖表：存储用户的获奖信息
